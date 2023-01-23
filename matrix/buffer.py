@@ -384,6 +384,7 @@ class WeechatChannelBuffer(object):
 
         self.name = ""
         self.users = {}  # type: Dict[str, WeechatUser]
+        self.own_user = user
         self.smart_filtered_nicks = set()  # type: Set[str]
 
         self.topic_author = ""
@@ -558,6 +559,10 @@ class WeechatChannelBuffer(object):
                 W.color("reset"),
             )
         )
+
+        if user.nick == self.own_user:
+            color = G.CONFIG.color.confirmed_message_fg
+            message = W.color(color) + message + W.color("reset")
 
         data = "{prefix}{color}{author}{ncolor}\t{msg}".format(
             prefix=prefix_string,
