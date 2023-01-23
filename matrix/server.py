@@ -1329,7 +1329,15 @@ class MatrixServer(object):
     def _handle_login_info(self, response):
         if ("m.login.sso" in response.flows
                 and (not self.config.username or not self.config.password)):
-            self.start_login_sso()
+            access_token = W.info_get_hashtable("secured_data", None).get(f"matrix.server.{self.name}.access_token")
+            if access_token is None:
+                self.start_login_sso()
+            else:
+                response.user_id = self.config.username
+                response.device_id = self.device_id
+                response.access_token = access_token
+                self.client._handle_login(response)
+                self.login()
         elif "m.login.password" in response.flows:
             self.login()
         else:
@@ -1337,6 +1345,9 @@ class MatrixServer(object):
             self.disconnect()
 
     def _handle_login(self, response):
+        W.prnt(self.server_buffer, "Use the following command to store the access token:")
+        W.prnt(self.server_buffer, f"/secure set matrix.server.{self.name}.access_token {response.access_token}")
+
         self.access_token = response.access_token
         self.user_id = response.user_id
         self.client.access_token = response.access_token
