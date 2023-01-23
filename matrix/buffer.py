@@ -53,7 +53,7 @@ from nio import (
 )
 
 from . import globals as G
-from .colors import Formatted
+from .colors import Formatted, FormattedString, DEFAULT_ATTRIBUTES
 from .config import RedactType, NewChannelPosition
 from .globals import SCRIPT_NAME, SERVERS, W, TYPING_NOTICE_TIMEOUT
 from .utf import utf8_decode
@@ -1620,7 +1620,16 @@ class RoomBuffer(object):
             )
             new_lines = data.split("\n")
         else:
-            new_lines = new_message.formatted_message.to_weechat().split("\n")
+            plain_message = new_message.formatted_message.to_weechat()
+            plain_message = W.string_remove_color(plain_message, "")
+            attributes = DEFAULT_ATTRIBUTES.copy()
+            attributes["fgcolor"] = G.CONFIG.color.confirmed_message_fg
+            attributes["bgcolor"] = G.CONFIG.color.confirmed_message_bg
+            new_formatted = Formatted([FormattedString(
+                plain_message,
+                attributes
+            )])
+            new_lines = new_formatted.to_weechat().split("\n")
 
         line_count = len(new_lines)
 

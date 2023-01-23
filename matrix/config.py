@@ -844,6 +844,24 @@ class MatrixConfig(WeechatConfig):
                 "Background counterpart of unconfirmed_message_fg."
             ),
             Option(
+                "confirmed_message_fg",
+                "color",
+                "",
+                0,
+                0,
+                "darkgray",
+                "Foreground color for messages that the server has confirmed.",
+            ),
+            Option(
+                "confirmed_message_bg",
+                "color",
+                "",
+                0,
+                0,
+                "default",
+                "Background counterpart of confirmed_message_fg."
+            ),
+            Option(
                 "untagged_code_fg",
                 "color",
                 "",
